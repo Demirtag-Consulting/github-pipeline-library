@@ -1,0 +1,85 @@
+name: Regression-Tests-Hyperscaled
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Playwright scope for selecting the tests to run (Runs all tests if empty)'
+        required: false
+        default: ''
+      test-repository:
+        description: 'Repository containing the tests to run'
+        required: false
+        default: 'playwright-tests'
+
+jobs:
+  calculate-test-count:
+    runs-on: ubuntu-latest
+    outputs:
+      test-count: ${{ steps.set-test-count.outputs.test-count}}
+
+    steps:
+      - name: Calculate the test count
+        id: set-test-count
+        run: |
+          total_tests=$(npx playwright test --list | grep "Total:" | awk '{print $2}')
+          echo "$total_tests tests in scope"
+          shard_count=$(( (total_tests + 9) / 10 ))
+          echo "Executing the tests on $shard_count runners simultaneously"
+          echo "shard_count=${shard_count}" >> $GITHUB_ENV
+
+  matrix-setup:
+    needs: calculate-test-count
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - name: Generate the matrix
+        id: set-matrix
+        run: |
+          RUNNER_COUNT="${{ needs.calculate-test-count.output.test-count }}
+          matrix="["
+          for (( i=1; i<=RUNNER_COUNT; i++ ))
+          do
+            matrix+="{\"shard\": $i},"
+          done
+          matrix="${matrix%m}]"
+          echo "matrix=${matrix}" >> $GITHUB_ENV
+
+  regression-tests-hyperscaled:
+    needs: matrix-setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.matrix-setup.output.matrix) }}
+
+    steps:
+      - name: Checkout automation repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      - name: Run Tests
+        run: |
+          echo "Executing test shard ${{ matrix.shard }} of $shard_count"
+          npx playwright test ${{ github.event.inputs.scope }} --shard=${{ matrix.shard }}/$shard_count
+
+      #TODO: Merge the sharded reports into a single HTML
+      #TODO: Host the report via GitHub Pages
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report
