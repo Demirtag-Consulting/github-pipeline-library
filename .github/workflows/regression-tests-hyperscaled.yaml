@@ -19,6 +19,20 @@ jobs:
       test-count: ${{ steps.set-test-count.outputs.test-count}}
 
     steps:
+      - name: Checkout automation repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          repository: ${{ github.event.inputs.test-repository || 'playwright-tests' }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
       - name: Calculate the test count
         id: set-test-count
         run: |
@@ -59,6 +73,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          repository: ${{ github.event.inputs.test-repository || 'playwright-tests' }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
