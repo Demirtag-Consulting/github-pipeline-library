@@ -1,0 +1,13 @@
+name: 'Playwright Test Hyperscaled'
+description: 'Run Playwright tests in parallel on a dynamically scaling amount of runners'
+inputs:
+  scope:
+    description: 'Playwright scope for selecting the tests to run (Runs all tests if empty)'
+    required: false
+    default: ''
+outputs:
+  matrix:
+    description: 'The matrix of runners to run the tests on'
+runs:
+  using: "node20"
+  main: "dist/index.js"
