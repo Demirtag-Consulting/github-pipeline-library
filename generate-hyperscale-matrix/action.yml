@@ -1,5 +1,5 @@
-name: 'Playwright Test Hyperscaled'
-description: 'Run Playwright tests in parallel on a dynamically scaling amount of runners'
+name: 'Generate Hyperscale Matrix'
+description: 'Generate a dynamically scaled matrix of runners for running Playwright tests in parallel'
 inputs:
   scope:
     description: 'Playwright scope for selecting the tests to run (Runs all tests if empty)'
@@ -7,7 +7,7 @@ inputs:
     default: ''
 outputs:
   matrix:
-    description: 'The matrix of runners to run the tests on'
+    description: 'The GitHub runner matrix'
 runs:
   using: "node20"
   main: "dist/index.js"

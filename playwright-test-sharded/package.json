@@ -1,7 +1,7 @@
 {
-  "name": "playwright-test-hyperscaled",
+  "name": "playwright-test-sharded",
   "version": "1.0.0",
-  "description": "Run Playwright tests in parallel on a dynamically scaling amount of runners",
+  "description": "Run Playwright tests in parallel on a specified matrix of runners",
   "main": "./dist/index.js",
   "type": "module",
   "scripts": {
@@ -15,5 +15,9 @@
   "devDependencies": {
     "@types/node": "^22.10.10",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1"
   }
 }
