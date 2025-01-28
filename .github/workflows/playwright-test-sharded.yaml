@@ -31,8 +31,14 @@ jobs:
             run: npm ci
 
           - name: Run tests sharded
+            id: run
             uses: demirtag-consulting/pipeline-library/playwright-test-sharded@main
             with:
               scope: ${{ github.event.inputs.scope }}
               index: ${{ github.event.inputs.index }}
               total: ${{ github.event.inputs.total }}
+
+          - name: Show test report
+            run: |
+              echo "Test report:"
+              echo "${{ steps.run.outputs.report }}"
