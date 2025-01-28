@@ -20,6 +20,9 @@ jobs:
           - name: "Checkout code"
             uses: actions/checkout@v4
 
+          - name: 'Change to sample project directory'
+            run: cd sample-projects/sample-playwright-hyperscaled
+
           - name: Setup Node.js
             uses: actions/setup-node@v4
             with:
