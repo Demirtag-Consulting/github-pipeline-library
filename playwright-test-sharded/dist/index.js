@@ -1,15 +1,15 @@
-import * as core from '@actions/core';
 import { PlaywrightTestSharded } from "./playwright-test-sharded";
+import { getInput, setFailed } from "@actions/core";
 async function run() {
     try {
-        const scope = core.getInput('scope');
-        const index = Number(core.getInput('index'));
-        const total = Number(core.getInput('total'));
+        const scope = getInput('scope');
+        const index = Number(getInput('index'));
+        const total = Number(getInput('total'));
         const playwrightTestSharded = new PlaywrightTestSharded();
         await playwrightTestSharded.setupPlaywright();
         await playwrightTestSharded.runTests(scope, index, total);
     }
     catch (error) {
-        core.setFailed(error.message);
+        setFailed(error.message);
     }
 }

@@ -1,29 +1,29 @@
-import * as exec from "@actions/exec";
-import * as core from "@actions/core";
+import { exec } from "@actions/exec";
+import {setFailed, setOutput, warning} from "@actions/core";
 
 export class PlaywrightTestSharded {
     async setupPlaywright() {
         try {
-            await exec.exec('npm ci');
+            await exec('npm ci');
         } catch (error: any) {
-            core.warning('npm ci failed. Running npm install instead');
-            await exec.exec('npm install');
+            warning('npm ci failed. Running npm install instead');
+            await exec('npm install');
         }
 
         try {
-            await exec.exec('npx playwright install');
+            await exec('npx playwright install');
         } catch (error: any) {
-            core.setFailed(error.message);
+            setFailed(error.message);
         }
     }
 
     async runTests(scope: string, index: number, total: number) {
         try {
-            await exec.exec('npx playwright test ' + scope + ' --shard=' + index + '/' + total);
+            await exec('npx playwright test ' + scope + ' --shard=' + index + '/' + total);
         } catch(error: any) {
-            core.setFailed(error.message);
+            setFailed(error.message);
         } finally {
-            core.setOutput('report', 'report-directory');
+            setOutput('report', 'report-directory');
         }
     }
 }
