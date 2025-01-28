@@ -11,7 +11,13 @@ export class PlaywrightTestSharded {
         }
 
         try {
-            await exec('npx playwright install');
+            await exec('npx playwright install chromium');
+        } catch (error: any) {
+            setFailed(error.message);
+        }
+
+        try {
+            await exec('npx playwright install-deps');
         } catch (error: any) {
             setFailed(error.message);
         }

@@ -27426,37 +27426,43 @@ module.exports = parseParams
 var __webpack_exports__ = {};
 
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var lib_exec = __nccwpck_require__(1751);
+var exec = __nccwpck_require__(1751);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(3063);
 ;// CONCATENATED MODULE: ./src/playwright-test-sharded.ts
 
 
-class playwright_test_sharded_PlaywrightTestSharded {
+class PlaywrightTestSharded {
     async setupPlaywright() {
         try {
-            await exec('npm ci');
+            await (0,exec.exec)('npm ci');
         }
         catch (error) {
-            warning('npm ci failed. Running npm install instead');
-            await exec('npm install');
+            (0,core.warning)('npm ci failed. Running npm install instead');
+            await (0,exec.exec)('npm install');
         }
         try {
-            await exec('npx playwright install');
+            await (0,exec.exec)('npx playwright install chromium');
         }
         catch (error) {
-            setFailed(error.message);
+            (0,core.setFailed)(error.message);
+        }
+        try {
+            await (0,exec.exec)('npx playwright install-deps');
+        }
+        catch (error) {
+            (0,core.setFailed)(error.message);
         }
     }
     async runTests(scope, index, total) {
         try {
-            await exec('npx playwright test ' + scope + ' --shard=' + index + '/' + total);
+            await (0,exec.exec)('npx playwright test ' + scope + ' --shard=' + index + '/' + total);
         }
         catch (error) {
-            setFailed(error.message);
+            (0,core.setFailed)(error.message);
         }
         finally {
-            setOutput('report', 'report-directory');
+            (0,core.setOutput)('report', 'report-directory');
         }
     }
 }
@@ -27466,15 +27472,19 @@ class playwright_test_sharded_PlaywrightTestSharded {
 
 async function run() {
     try {
-        const scope = getInput('scope');
-        const index = Number(getInput('index'));
-        const total = Number(getInput('total'));
+        const scope = (0,core.getInput)('scope');
+        const index = Number((0,core.getInput)('index'));
+        const total = Number((0,core.getInput)('total'));
+        console.log("Scope: " + scope);
+        console.log("Index: " + index);
+        (0,core.setOutput)('report', 'report-directory');
         const playwrightTestSharded = new PlaywrightTestSharded();
         await playwrightTestSharded.setupPlaywright();
-        await playwrightTestSharded.runTests(scope, index, total);
+        await playwrightTestSharded.runTests('', 1, 1);
     }
     catch (error) {
-        setFailed(error.message);
+        (0,core.setFailed)(error.message);
     }
 }
+run();
 

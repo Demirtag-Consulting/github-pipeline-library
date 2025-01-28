@@ -32,7 +32,7 @@ jobs:
 
           - name: Run tests sharded
             id: run
-            uses: demirtag-consulting/pipeline-library/playwright-test-sharded@main
+            uses: ./playwright-test-sharded
             with:
               scope: ${{ github.event.inputs.scope }}
               index: ${{ github.event.inputs.index }}
