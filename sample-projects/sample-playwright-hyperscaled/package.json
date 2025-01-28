@@ -1,0 +1,14 @@
+{
+  "name": "sample-playwright-hyperscaled",
+  "version": "1.0.0",
+  "description": "Sample playwright project showing (and testing) how the actions \"generate-hyperscale-matrix\" \r and \"playwright-test-sharded\" can be used to hyperscale the execution of a large number of tests.",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.12.0"
+  }
+}

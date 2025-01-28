@@ -5,6 +5,12 @@ inputs:
     description: 'Playwright scope for selecting the tests to run (Runs all tests if empty)'
     required: false
     default: ''
+  index:
+    description: 'The index of the runner in the matrix'
+    required: true
+  total:
+    description: 'The total number of runners in the matrix'
+    required: true
 outputs:
   report:
     description: 'The report of the test execution'

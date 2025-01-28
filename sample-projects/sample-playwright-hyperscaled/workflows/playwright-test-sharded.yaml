@@ -1,0 +1,36 @@
+name: Playwright-Test-Sharded
+description: Sample showing the playwright-test-sharded action
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Playwright scope for selecting the tests to run (Runs all tests if empty)'
+        required: false
+        default: ''
+      index:
+        description: 'Index of the shard to run'
+        required: true
+      total:
+        description: 'Total number of shards'
+        required: true
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+          - name: "Checkout code"
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+            node-version: "20"
+
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Run tests sharded
+            uses: demirtag-consulting/pipeline-library/playwright-test-sharded@main
+            with:
+              scope: ${{ github.event.inputs.scope }}
+              index: ${{ github.event.inputs.index }}
+              total: ${{ github.event.inputs.total }}

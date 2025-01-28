@@ -1,11 +1,18 @@
 import * as core from '@actions/core';
-import * as exec from '@actions/exec';
+import {PlaywrightTestSharded} from "./playwright-test-sharded";
 
 async function run() {
     try {
         const scope = core.getInput('scope');
-        const testRepository = core.getInput('test-repository') || 'playwright-tests';
+        const index: number = Number(core.getInput('index'));
+        const total: number = Number(core.getInput('total'));
+
+        const playwrightTestSharded = new PlaywrightTestSharded();
+        await playwrightTestSharded.setupPlaywright();
+        await playwrightTestSharded.runTests(scope, index, total);
+
     } catch (error: any) {
         core.setFailed(error.message);
     }
 }
+
