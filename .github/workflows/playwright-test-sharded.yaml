@@ -1,5 +1,4 @@
 name: Playwright-Test-Sharded
-description: Sample showing the playwright-test-sharded action
 on:
   workflow_dispatch:
     inputs:
