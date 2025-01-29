@@ -27435,34 +27435,39 @@ var core = __nccwpck_require__(3063);
 class PlaywrightTestSharded {
     async setupPlaywright() {
         try {
-            await (0,exec.exec)('npm ci');
+            await (0,exec.exec)('npm ci', [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
         }
         catch (error) {
             (0,core.warning)('npm ci failed. Running npm install instead');
-            await (0,exec.exec)('npm install');
+            await (0,exec.exec)('npm install', [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
         }
         try {
-            await (0,exec.exec)('npx playwright install chromium');
+            await (0,exec.exec)('npx playwright install chromium --with-deps', [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
         }
         catch (error) {
             (0,core.setFailed)(error.message);
         }
         try {
-            await (0,exec.exec)('npx playwright install-deps');
+            // await exec('npx playwright install-deps', [], {cwd: './sample-projects/sample-playwright-hyperscaled'});
         }
         catch (error) {
             (0,core.setFailed)(error.message);
         }
     }
     async runTests(scope, index, total) {
+        let report = '';
         try {
-            await (0,exec.exec)('npx playwright test ' + scope + ' --shard=' + index + '/' + total);
+            await (0,exec.exec)('npm i', [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
+            await (0,exec.exec)('ls', [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
+            const response = await (0,exec.getExecOutput)(`npx playwright test ${scope} --shard=${index}/${total} --reporter=html`, [], { cwd: './sample-projects/sample-playwright-hyperscaled' });
+            await (0,exec.exec)('ls -lR', [], { cwd: './sample-projects/sample-playwright-hyperscaled/test-results' });
+            report = response.stdout;
         }
         catch (error) {
             (0,core.setFailed)(error.message);
         }
         finally {
-            (0,core.setOutput)('report', 'report-directory');
+            (0,core.setOutput)('report', report);
         }
     }
 }
@@ -27477,6 +27482,7 @@ async function run() {
         const total = Number((0,core.getInput)('total'));
         console.log("Scope: " + scope);
         console.log("Index: " + index);
+        console.log("Total: " + total);
         (0,core.setOutput)('report', 'report-directory');
         const playwrightTestSharded = new PlaywrightTestSharded();
         await playwrightTestSharded.setupPlaywright();
